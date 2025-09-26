@@ -10,12 +10,7 @@ export async function GET() {
 		);
 	}
 
-	const scopes = [
-		"identity.basic",
-		"identity.email",
-		"identity.avatar",
-		"identity.team",
-	].join(",");
+	const scopes = ["openid", "profile", "email"].join(",");
 
 	const redirectUri = `${
 		process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
