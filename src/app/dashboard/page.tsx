@@ -6,7 +6,6 @@ import GradientBackground from "@/components/GradientBackground";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/Footer";
-import { redirect } from "next/navigation";
 import {
 	ChartNoAxesCombined,
 	Cog,
@@ -15,6 +14,7 @@ import {
 	TerminalSquare,
 	Users2,
 } from "lucide-react";
+import { redirect } from "next/navigation";
 
 const mockUser: IUser = {
 	_id: "mock_user_id",
@@ -61,7 +61,7 @@ export default async function Dashboard() {
 	const displayUser = user || mockUser;
 
 	if (!user) {
-		// redirect("/auth/login");
+		redirect("/auth/login");
 	}
 
 	return (
