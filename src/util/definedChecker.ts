@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server";
 
 function checkDefined(vars: Record<string, unknown>): NextResponse | null {
