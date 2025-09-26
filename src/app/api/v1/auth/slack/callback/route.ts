@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.redirect(
 			`${
 				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-			}/login?error=access_denied`
+			}/auth/login?error=access_denied`
 		);
 	}
 
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.redirect(
 			`${
 				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-			}/login?error=no_code`
+			}/auth/login?error=no_code`
 		);
 	}
 
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.redirect(
 				`${
 					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-				}/login?error=oauth_error`
+				}/auth/login?error=oauth_error`
 			);
 		}
 
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.redirect(
 				`${
 					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-				}/login?error=user_info_error`
+				}/auth&login?error=user_info_error`
 			);
 		}
 
