@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 		const tokenData = await tokenResponse.json();
 
 		if (!tokenData.ok) {
-			console.error("Slack OAuth error:", tokenData.error);
+			console.error("Slack OAuth error:", tokenData);
 			return NextResponse.redirect(
 				`${
 					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 		const userData = await userResponse.json();
 
 		if (!userData.ok) {
-			console.error("Slack user info error:", userData.error);
+			console.error("Slack user info error:", userData);
 			return NextResponse.redirect(
 				`${
 					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
