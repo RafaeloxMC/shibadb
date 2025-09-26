@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.redirect(
 				`${
 					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-				}/auth&login?error=user_info_error`
+				}/auth/login?error=user_info_error`
 			);
 		}
 
