@@ -22,7 +22,7 @@ export default function LoginPage() {
 						<div className="bg-white/70 dark:bg-neutral-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 dark:border-neutral-700/30">
 							<a
 								href="/api/v1/auth/slack"
-								className="w-full flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 space-x-3"
+								className="w-full flex items-center justify-center px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 space-x-3"
 							>
 								<Slack />
 								<span>Continue with Slack</span>

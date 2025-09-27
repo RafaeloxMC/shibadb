@@ -11,7 +11,7 @@ const CallToAction = () => (
 
 			<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
 				<a
-					href="#"
+					href="/dashboard"
 					className="px-10 py-4 bg-pink-500 text-white text-xl font-bold rounded-full shadow-xl hover:shadow-2xl hover:bg-pink-600 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300/50"
 				>
 					Get Your Token

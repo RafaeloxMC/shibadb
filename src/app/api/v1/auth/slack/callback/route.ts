@@ -106,7 +106,9 @@ export async function GET(request: NextRequest) {
 			}/dashboard`
 		);
 
-		response.cookies.set("session_token", token, {
+		response.cookies.set({
+			name: "session_token",
+			value: token,
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
