@@ -110,13 +110,17 @@ export async function GET(request: NextRequest) {
 			}
 		);
 
+		const cookieMaxAge = 7 * 24 * 60 * 60;
+		const cookieExpires = new Date(Date.now() + cookieMaxAge * 1000);
+
 		response.cookies.set({
 			name: "session_token",
 			value: token,
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
-			maxAge: 7 * 24 * 60 * 60,
+			maxAge: cookieMaxAge,
+			expires: cookieExpires,
 			path: "/",
 		});
 
