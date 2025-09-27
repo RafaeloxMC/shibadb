@@ -179,12 +179,15 @@ export default async function Dashboard() {
 									Mock Data
 								</span>
 							)}
-							<Link
-								href="/api/v1/auth/logout"
+							<span
+								onClick={() =>
+									(window.location.href =
+										"/api/v1/auth/logout")
+								}
 								className="px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:text-pink-600 dark:hover:text-pink-400 font-medium transition-colors duration-300"
 							>
 								Logout
-							</Link>
+							</span>
 						</div>
 					</div>
 				</nav>
