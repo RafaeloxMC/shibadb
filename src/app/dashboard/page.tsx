@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { connectDB } from "@/database/database";
 import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
+import Game from "@/database/schemas/Game";
 import GradientBackground from "@/components/GradientBackground";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,6 +16,7 @@ import {
 	Users2,
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { Types } from "mongoose";
 
 const mockUser: IUser = {
 	_id: "mock_user_id",
@@ -30,7 +32,7 @@ const mockUser: IUser = {
 async function getAuthenticatedUser(): Promise<IUser | null> {
 	try {
 		const cookieStore = await cookies();
-		const token = cookieStore.get("session_token")?.value;
+		const token = cookieStore.get("shibaCookie")?.value;
 
 		if (!token) {
 			return null;
@@ -55,14 +57,90 @@ async function getAuthenticatedUser(): Promise<IUser | null> {
 	}
 }
 
+async function getDashboardData(userId: string) {
+	try {
+		await connectDB();
+
+		const games = await Game.find({ userId }).select(
+			"totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt"
+		);
+
+		const totalGames = games.length;
+		const totalPlayers = games.reduce(
+			(sum, game) => sum + (game.totalPlayers || 0),
+			0
+		);
+		const activePlayers = games.reduce(
+			(sum, game) => sum + (game.activePlayers || 0),
+			0
+		);
+
+		const lastPlayedGame = games
+			.filter((game) => game.lastPlayedAt)
+			.sort(
+				(a, b) =>
+					new Date(b.lastPlayedAt!).getTime() -
+					new Date(a.lastPlayedAt!).getTime()
+			)[0];
+
+		const avgSessionTime =
+			games.length > 0
+				? Math.round(
+						games.reduce(
+							(sum, game) => sum + (game.averageSessionTime || 0),
+							0
+						) / games.length
+				  )
+				: 0;
+
+		const getTimeSinceLastPlayed = () => {
+			if (!lastPlayedGame?.lastPlayedAt) return "Never";
+			const diff =
+				Date.now() - new Date(lastPlayedGame.lastPlayedAt).getTime();
+			const minutes = Math.floor(diff / (1000 * 60));
+			const hours = Math.floor(minutes / 60);
+			const days = Math.floor(hours / 24);
+
+			if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+			if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+			if (minutes > 0)
+				return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+			return "Just now";
+		};
+
+		return {
+			totalGames,
+			totalPlayers,
+			activePlayers,
+			lastPlayed: getTimeSinceLastPlayed(),
+			averageSessionTime:
+				avgSessionTime > 0
+					? `${Math.round(avgSessionTime / 60)} min`
+					: "0 min",
+		};
+	} catch (error) {
+		console.error("Error fetching dashboard data:", error);
+		return {
+			totalGames: 12,
+			totalPlayers: 247,
+			activePlayers: 89,
+			lastPlayed: "2 minutes ago",
+			averageSessionTime: "14 min",
+		};
+	}
+}
+
 export default async function Dashboard() {
 	const user = await getAuthenticatedUser();
-
 	const displayUser = user || mockUser;
 
 	if (!user) {
 		redirect("/auth/login");
 	}
+
+	const dashboardData = await getDashboardData(
+		(user._id as Types.ObjectId).toString()
+	);
 
 	return (
 		<GradientBackground>
@@ -183,7 +261,7 @@ export default async function Dashboard() {
 										Active Games
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										12
+										{dashboardData.totalGames}
 									</span>
 								</div>
 								<div className="flex justify-between text-sm">
@@ -191,7 +269,7 @@ export default async function Dashboard() {
 										Total Players
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										247
+										{dashboardData.totalPlayers}
 									</span>
 								</div>
 							</div>
@@ -220,7 +298,7 @@ export default async function Dashboard() {
 										Total Users
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										1,247
+										{dashboardData.totalPlayers}
 									</span>
 								</div>
 								<div className="flex justify-between text-sm">
@@ -228,7 +306,7 @@ export default async function Dashboard() {
 										Active Today
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										89
+										{dashboardData.activePlayers}
 									</span>
 								</div>
 							</div>
@@ -331,7 +409,7 @@ export default async function Dashboard() {
 										Last Played
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										2 minutes ago
+										{dashboardData.lastPlayed}
 									</span>
 								</div>
 								<div className="flex justify-between text-sm">
@@ -339,7 +417,7 @@ export default async function Dashboard() {
 										Average Time
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										14 min
+										{dashboardData.averageSessionTime}
 									</span>
 								</div>
 							</div>

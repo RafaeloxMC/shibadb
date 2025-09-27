@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
 		const cookieExpires = new Date(Date.now() + cookieMaxAge * 1000);
 
 		response.cookies.set({
-			name: "session_token",
+			name: "shibaCookie",
 			value: token,
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",

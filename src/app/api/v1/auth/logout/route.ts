@@ -3,7 +3,7 @@ import { connectDB } from "@/database/database";
 import Session from "@/database/schemas/Session";
 
 async function handleLogout(request: NextRequest) {
-	const token = request.cookies.get("session_token")?.value;
+	const token = request.cookies.get("shibaCookie")?.value;
 
 	if (token) {
 		try {
@@ -15,7 +15,7 @@ async function handleLogout(request: NextRequest) {
 	}
 
 	const response = NextResponse.redirect(new URL("/", request.url));
-	response.cookies.set("session_token", "", {
+	response.cookies.set("shibaCookie", "", {
 		expires: new Date(0),
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
