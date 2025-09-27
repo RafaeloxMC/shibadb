@@ -100,10 +100,14 @@ export async function GET(request: NextRequest) {
 			expiresAt,
 		});
 
-		const response = NextResponse.redirect(
-			`${
-				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-			}/dashboard`
+		const response = new NextResponse(
+			`<html><head><meta http-equiv="refresh" content="0;url=/dashboard"/></head><body>Redirecting...</body></html>`,
+			{
+				status: 200,
+				headers: {
+					"Content-Type": "text/html",
+				},
+			}
 		);
 
 		response.cookies.set({
