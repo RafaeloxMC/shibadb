@@ -7,7 +7,7 @@ import { checkDefined } from "@/util/definedChecker";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -29,7 +29,7 @@ export async function GET(
 		}
 
 		const game = await Game.findOne({
-			_id: params.id,
+			_id: (await params).id,
 			userId: payload.userId,
 		});
 
@@ -50,13 +50,15 @@ export async function GET(
 		const sortBy = searchParams.get("sortBy") || "lastPlayedAt";
 		const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
 
-		const players = await Player.find({ gameId: params.id })
+		const players = await Player.find({ gameId: (await params).id })
 			.sort({ [sortBy]: sortOrder })
 			.skip(skip)
 			.limit(limit)
 			.select("-__v");
 
-		const total = await Player.countDocuments({ gameId: params.id });
+		const total = await Player.countDocuments({
+			gameId: (await params).id,
+		});
 
 		return NextResponse.json({
 			players,
@@ -78,7 +80,7 @@ export async function GET(
 
 export async function POST(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -100,7 +102,7 @@ export async function POST(
 		}
 
 		const game = await Game.findOne({
-			_id: params.id,
+			_id: (await params).id,
 			userId: payload.userId,
 		});
 
@@ -121,7 +123,7 @@ export async function POST(
 		}
 
 		let player = await Player.findOne({
-			gameId: params.id,
+			gameId: (await params).id,
 			playerId: body.playerId,
 		});
 
@@ -136,7 +138,7 @@ export async function POST(
 			await player.save();
 		} else {
 			player = new Player({
-				gameId: params.id,
+				gameId: (await params).id,
 				playerId: body.playerId,
 				slackId: body.slackId,
 				gameData: body.gameData || {},

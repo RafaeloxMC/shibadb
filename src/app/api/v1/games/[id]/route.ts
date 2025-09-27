@@ -7,7 +7,7 @@ import { checkDefined } from "@/util/definedChecker";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -29,7 +29,7 @@ export async function GET(
 		}
 
 		const game = await Game.findOne({
-			_id: params.id,
+			_id: (await params).id,
 			userId: payload.userId,
 		}).select("-__v");
 
@@ -52,7 +52,7 @@ export async function GET(
 
 export async function PUT(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -100,7 +100,7 @@ export async function PUT(
 		updates.updatedAt = new Date();
 
 		const game = await Game.findOneAndUpdate(
-			{ _id: params.id, userId: payload.userId },
+			{ _id: (await params).id, userId: payload.userId },
 			updates,
 			{ new: true, runValidators: true }
 		).select("-__v");
@@ -127,7 +127,7 @@ export async function PUT(
 
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -149,7 +149,7 @@ export async function DELETE(
 		}
 
 		const game = await Game.findOneAndDelete({
-			_id: params.id,
+			_id: (await params).id,
 			userId: payload.userId,
 		});
 
@@ -160,7 +160,7 @@ export async function DELETE(
 			);
 		}
 
-		await Player.deleteMany({ gameId: params.id });
+		await Player.deleteMany({ gameId: (await params).id });
 
 		return NextResponse.json({
 			message: "Game and associated data deleted successfully",

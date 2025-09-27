@@ -6,7 +6,7 @@ import { getTokenPayload } from "@/util/secureTokens";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string; playerId: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -27,8 +27,9 @@ export async function GET(
 			);
 		}
 
+		const resolvedParams = await params;
 		const game = await Game.findOne({
-			_id: params.id,
+			_id: resolvedParams.id,
 			userId: payload.userId,
 		});
 
@@ -39,21 +40,31 @@ export async function GET(
 			);
 		}
 
-		const player = await Player.findOne({
-			gameId: params.id,
-			playerId: params.playerId,
-		}).select("-__v");
+		const url = new URL(request.url);
+		const page = parseInt(url.searchParams.get("page") || "1");
+		const limit = parseInt(url.searchParams.get("limit") || "10");
+		const skip = (page - 1) * limit;
 
-		if (!player) {
-			return NextResponse.json(
-				{ error: "Player not found" },
-				{ status: 404 }
-			);
-		}
+		const [players, total] = await Promise.all([
+			Player.find({ gameId: resolvedParams.id })
+				.select("-__v")
+				.skip(skip)
+				.limit(limit)
+				.sort({ createdAt: -1 }),
+			Player.countDocuments({ gameId: resolvedParams.id }),
+		]);
 
-		return NextResponse.json({ player });
+		return NextResponse.json({
+			players,
+			pagination: {
+				page,
+				limit,
+				total,
+				pages: Math.ceil(total / limit),
+			},
+		});
 	} catch (error) {
-		console.error("Error fetching player:", error);
+		console.error("Error fetching players:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },
 			{ status: 500 }
@@ -61,9 +72,9 @@ export async function GET(
 	}
 }
 
-export async function DELETE(
+export async function POST(
 	request: NextRequest,
-	{ params }: { params: { id: string; playerId: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		await connectDB();
@@ -84,8 +95,9 @@ export async function DELETE(
 			);
 		}
 
+		const resolvedParams = await params;
 		const game = await Game.findOne({
-			_id: params.id,
+			_id: resolvedParams.id,
 			userId: payload.userId,
 		});
 
@@ -96,26 +108,44 @@ export async function DELETE(
 			);
 		}
 
-		const player = await Player.findOneAndDelete({
-			gameId: params.id,
-			playerId: params.playerId,
-		});
+		const { playerId, ...playerData } = await request.json();
 
-		if (!player) {
+		if (!playerId) {
 			return NextResponse.json(
-				{ error: "Player not found" },
-				{ status: 404 }
+				{ error: "Player ID is required" },
+				{ status: 400 }
 			);
 		}
 
-		game.totalPlayers = Math.max(0, game.totalPlayers - 1);
+		const existingPlayer = await Player.findOne({
+			gameId: resolvedParams.id,
+			playerId,
+		});
+
+		if (existingPlayer) {
+			return NextResponse.json(
+				{ error: "Player already exists" },
+				{ status: 409 }
+			);
+		}
+
+		const newPlayer = new Player({
+			gameId: resolvedParams.id,
+			playerId,
+			...playerData,
+		});
+
+		await newPlayer.save();
+
+		game.totalPlayers += 1;
 		await game.save();
 
-		return NextResponse.json({
-			message: "Player data deleted successfully",
-		});
+		return NextResponse.json(
+			{ message: "Player added successfully", player: newPlayer },
+			{ status: 201 }
+		);
 	} catch (error) {
-		console.error("Error deleting player:", error);
+		console.error("Error adding player:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },
 			{ status: 500 }
