@@ -16,7 +16,6 @@ import {
 	Users2,
 } from "lucide-react";
 import { redirect } from "next/navigation";
-import { Types } from "mongoose";
 
 const mockUser: IUser = {
 	_id: "mock_user_id",
@@ -168,9 +167,7 @@ export default async function Dashboard() {
 								/>
 							)}
 							<span className="text-neutral-700 dark:text-neutral-300 font-medium">
-								{displayUser.name ||
-									displayUser.email ||
-									"User"}
+								{displayUser.name || "User"}
 							</span>
 							{!user && (
 								<span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full">
@@ -214,10 +211,11 @@ export default async function Dashboard() {
 							</div>
 							<div>
 								<label className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-									Email
+									Created At
 								</label>
 								<p className="text-neutral-900 dark:text-white">
-									{displayUser.email || "Not provided"}
+									{displayUser.createdAt.toLocaleString() ||
+										"Not provided"}
 								</p>
 							</div>
 							<div>
