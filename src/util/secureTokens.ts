@@ -13,6 +13,12 @@ export function generateTokenWithExpiry(hours: number = 24 * 7) {
 	};
 }
 
+export function generateGameToken() {
+	return {
+		token: "SHIBADB-" + generateSecureToken(),
+	};
+}
+
 export async function getTokenPayload(
 	token: string
 ): Promise<{ userId: string; slackId: string } | null> {
@@ -37,3 +43,5 @@ export async function getTokenPayload(
 		return null;
 	}
 }
+
+export async function getGameTokenPayload() {}

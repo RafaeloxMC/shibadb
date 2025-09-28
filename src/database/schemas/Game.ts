@@ -13,6 +13,7 @@ export interface IGame extends Document {
 	totalSessions: number;
 	averageSessionTime: number;
 	lastPlayedAt?: Date;
+	apiKeys: string[];
 }
 
 const GameSchema = new Schema<IGame>({
@@ -43,7 +44,12 @@ const GameSchema = new Schema<IGame>({
 		type: Date,
 		required: false,
 	},
+	apiKeys: {
+		type: [String],
+		required: false,
+	},
 });
 
-export default (mongoose.models.Game as mongoose.Model<IGame>) ||
+export default (mongoose.models &&
+	(mongoose.models.Game as mongoose.Model<IGame>)) ||
 	mongoose.model<IGame>("Game", GameSchema);

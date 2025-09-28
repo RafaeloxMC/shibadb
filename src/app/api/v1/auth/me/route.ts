@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authenticateUser } from "@/app/middleware";
+import { authenticateUser } from "@/middleware";
 
 export async function GET(request: NextRequest) {
 	const user = await authenticateUser(request);

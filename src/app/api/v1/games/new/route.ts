@@ -1,4 +1,4 @@
-import { requireAuth } from "@/app/middleware";
+import { requireAuth } from "@/middleware";
 import Game from "@/database/schemas/Game";
 import { checkDefined } from "@/util/definedChecker";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/database";
 import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
@@ -62,4 +62,19 @@ export async function requireAuth(
 	}
 
 	return { user };
+}
+
+export async function middleware(request: NextRequest) {
+	if (request.method == "POST") {
+		if (request.bodyUsed == false) {
+			return NextResponse.json(
+				{
+					message: "Bad request",
+				},
+				{
+					status: 400,
+				}
+			);
+		}
+	}
 }

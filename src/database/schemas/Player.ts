@@ -55,5 +55,6 @@ PlayerSchema.pre("save", function (next) {
 	next();
 });
 
-export default (mongoose.models.Player as mongoose.Model<IPlayer>) ||
+export default (mongoose.models &&
+	(mongoose.models.Player as mongoose.Model<IPlayer>)) ||
 	mongoose.model<IPlayer>("Player", PlayerSchema);
