@@ -66,7 +66,7 @@ export async function requireAuth(
 
 export async function middleware(request: NextRequest) {
 	if (request.method == "POST") {
-		if (request.bodyUsed == false) {
+		if (request.body != null) {
 			return NextResponse.json(
 				{
 					message: "Bad request",
