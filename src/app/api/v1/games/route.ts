@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/database";
 import Game from "@/database/schemas/Game";
 import { getTokenPayload } from "@/util/secureTokens";
-import { checkDefined } from "@/util/definedChecker";
 
 export async function GET(request: NextRequest) {
 	try {

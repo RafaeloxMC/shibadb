@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { connectDB } from "@/database/database";
 import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
-import Game from "@/database/schemas/Game";
+import Game, { IGame } from "@/database/schemas/Game";
 import GradientBackground from "@/components/GradientBackground";
 import Link from "next/link";
 import Image from "next/image";
@@ -60,9 +60,9 @@ async function getDashboardData(ownerSlackId: string) {
 	try {
 		await connectDB();
 
-		const games = await Game.find({ ownerSlackId }).select(
-			"totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt"
-		);
+		const games = (await Game.find({ ownerSlackId }).select(
+			"totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt apiKeys"
+		)) as IGame[];
 
 		const totalGames = games.length;
 		const totalPlayers = games.reduce(
@@ -107,6 +107,11 @@ async function getDashboardData(ownerSlackId: string) {
 			return "Just now";
 		};
 
+		let keyAmount = 0;
+		for (const game of games as IGame[]) {
+			keyAmount += game.apiKeys.length;
+		}
+
 		return {
 			totalGames,
 			totalPlayers,
@@ -116,6 +121,7 @@ async function getDashboardData(ownerSlackId: string) {
 				avgSessionTime > 0
 					? `${Math.round(avgSessionTime / 60)} min`
 					: "0 min",
+			keyAmount,
 		};
 	} catch (error) {
 		console.error("Error fetching dashboard data:", error);
@@ -332,7 +338,7 @@ export default async function Dashboard() {
 										Active Keys
 									</span>
 									<span className="font-medium text-neutral-900 dark:text-white">
-										3
+										{dashboardData.keyAmount || 0}
 									</span>
 								</div>
 								<div className="flex justify-between text-sm">
