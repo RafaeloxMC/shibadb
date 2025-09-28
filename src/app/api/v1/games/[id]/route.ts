@@ -28,6 +28,13 @@ export async function GET(
 			);
 		}
 
+		console.log("Token payload userId:", payload.userId);
+		console.log("Expected ownerSlackId:", "U092C7GG64Q");
+		console.log("Game ID being searched:", (await params).id);
+
+		const gameExists = await Game.findOne({ _id: (await params).id });
+		console.log("Game exists (ignoring owner):", !!gameExists);
+
 		const game = await Game.findOne({
 			_id: (await params).id,
 			ownerSlackId: payload.userId,
