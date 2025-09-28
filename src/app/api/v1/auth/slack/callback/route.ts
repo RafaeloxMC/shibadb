@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/database";
 import { generateTokenWithExpiry } from "@/util/secureTokens";
 import Session from "@/database/schemas/Session";
-import User from "@/database/schemas/User";
+import User, { IUser } from "@/database/schemas/User";
+import { Types } from "mongoose";
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
 
 		await connectDB();
 
-		const user = await User.findOneAndUpdate(
+		const user = (await User.findOneAndUpdate(
 			{ slackId: userData.user.id },
 			{
 				slackId: userData.user.id,
@@ -90,13 +91,13 @@ export async function GET(request: NextRequest) {
 				updatedAt: new Date(),
 			},
 			{ upsert: true, new: true }
-		);
+		)) as IUser;
 
 		const { token, expiresAt } = generateTokenWithExpiry(24 * 7);
 
 		await Session.create({
 			token,
-			userId: user._id.toString(),
+			userId: (user._id as Types.ObjectId).toString(),
 			expiresAt,
 		});
 

@@ -30,7 +30,7 @@ export async function GET(
 
 		const game = await Game.findOne({
 			_id: (await params).id,
-			userId: payload.userId,
+			ownerSlackId: payload.userId,
 		}).select("-__v");
 
 		if (!game) {
@@ -100,7 +100,7 @@ export async function PUT(
 		updates.updatedAt = new Date();
 
 		const game = await Game.findOneAndUpdate(
-			{ _id: (await params).id, userId: payload.userId },
+			{ _id: (await params).id, ownerSlackId: payload.userId },
 			updates,
 			{ new: true, runValidators: true }
 		).select("-__v");
@@ -150,7 +150,7 @@ export async function DELETE(
 
 		const game = await Game.findOneAndDelete({
 			_id: (await params).id,
-			userId: payload.userId,
+			ownerSlackId: payload.userId,
 		});
 
 		if (!game) {
