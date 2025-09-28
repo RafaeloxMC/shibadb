@@ -30,7 +30,7 @@ export async function GET(
 
 		const game = await Game.findOne({
 			_id: (await params).id,
-			userId: payload.userId,
+			ownerSlackId: payload.slackId,
 		});
 
 		if (!game) {
@@ -103,7 +103,7 @@ export async function POST(
 
 		const game = await Game.findOne({
 			_id: (await params).id,
-			userId: payload.userId,
+			ownerSlackId: payload.slackId,
 		});
 
 		if (!game) {

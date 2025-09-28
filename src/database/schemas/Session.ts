@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ISession extends Document {
 	token: string;
 	userId: string;
+	slackId: string;
 	expiresAt: Date;
 	createdAt: Date;
 }
@@ -10,6 +11,7 @@ export interface ISession extends Document {
 const SessionSchema = new Schema<ISession>({
 	token: { type: String, required: true, unique: true },
 	userId: { type: String, required: true },
+	slackId: { type: String, required: true },
 	expiresAt: { type: Date, required: true },
 	createdAt: { type: Date, default: Date.now },
 });

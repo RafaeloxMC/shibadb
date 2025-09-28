@@ -57,11 +57,11 @@ async function getAuthenticatedUser(): Promise<IUser | null> {
 	}
 }
 
-async function getDashboardData(userId: string) {
+async function getDashboardData(ownerSlackId: string) {
 	try {
 		await connectDB();
 
-		const games = await Game.find({ userId }).select(
+		const games = await Game.find({ ownerSlackId }).select(
 			"totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt"
 		);
 
@@ -138,9 +138,7 @@ export default async function Dashboard() {
 		redirect("/auth/login");
 	}
 
-	const dashboardData = await getDashboardData(
-		(user._id as Types.ObjectId).toString()
-	);
+	const dashboardData = await getDashboardData(user.slackId);
 
 	return (
 		<GradientBackground>

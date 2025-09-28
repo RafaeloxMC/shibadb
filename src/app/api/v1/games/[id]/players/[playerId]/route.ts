@@ -30,7 +30,7 @@ export async function GET(
 		const resolvedParams = await params;
 		const game = await Game.findOne({
 			_id: resolvedParams.id,
-			userId: payload.userId,
+			ownerSlackId: payload.slackId,
 		});
 
 		if (!game) {
@@ -98,7 +98,7 @@ export async function POST(
 		const resolvedParams = await params;
 		const game = await Game.findOne({
 			_id: resolvedParams.id,
-			userId: payload.userId,
+			ownerSlackId: payload.slackId,
 		});
 
 		if (!game) {

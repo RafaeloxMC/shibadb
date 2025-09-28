@@ -29,13 +29,15 @@ export async function GET(request: NextRequest) {
 		const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
 		const skip = (page - 1) * limit;
 
-		const games = await Game.find({ userId: payload.userId })
+		const games = await Game.find({ ownerSlackId: payload.slackId })
 			.sort({ updatedAt: -1 })
 			.skip(skip)
 			.limit(limit)
 			.select("-__v");
 
-		const total = await Game.countDocuments({ userId: payload.userId });
+		const total = await Game.countDocuments({
+			ownerSlackId: payload.slackId,
+		});
 
 		return NextResponse.json({
 			games,

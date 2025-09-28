@@ -15,7 +15,7 @@ export function generateTokenWithExpiry(hours: number = 24 * 7) {
 
 export async function getTokenPayload(
 	token: string
-): Promise<{ userId: string } | null> {
+): Promise<{ userId: string; slackId: string } | null> {
 	try {
 		await connectDB();
 
@@ -30,6 +30,7 @@ export async function getTokenPayload(
 
 		return {
 			userId: session.userId,
+			slackId: session.slackId,
 		};
 	} catch (error) {
 		console.error("Error validating token:", error);

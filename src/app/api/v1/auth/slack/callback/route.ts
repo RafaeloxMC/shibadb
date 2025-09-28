@@ -98,6 +98,7 @@ export async function GET(request: NextRequest) {
 		await Session.create({
 			token,
 			userId: (user._id as Types.ObjectId).toString(),
+			slackId: user.slackId,
 			expiresAt,
 		});
 
