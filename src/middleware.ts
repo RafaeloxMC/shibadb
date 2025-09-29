@@ -52,7 +52,7 @@ export async function requireAuth(
 	if (!user) {
 		return {
 			error: new Response(
-				JSON.stringify({ error: "Authentication required" }),
+				JSON.stringify({ message: "Authentication required" }),
 				{
 					status: 401,
 					headers: { "Content-Type": "application/json" },

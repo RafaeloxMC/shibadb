@@ -1,5 +1,6 @@
 import { connectDB } from "@/database/database";
 import Game, { IGame } from "@/database/schemas/Game";
+import { timeSince } from "./time";
 
 export async function getDashboardData(ownerSlackId: string) {
 	try {
@@ -37,21 +38,6 @@ export async function getDashboardData(ownerSlackId: string) {
 				  )
 				: 0;
 
-		const getTimeSinceLastPlayed = () => {
-			if (!lastPlayedGame?.lastPlayedAt) return "Never";
-			const diff =
-				Date.now() - new Date(lastPlayedGame.lastPlayedAt).getTime();
-			const minutes = Math.floor(diff / (1000 * 60));
-			const hours = Math.floor(minutes / 60);
-			const days = Math.floor(hours / 24);
-
-			if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
-			if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-			if (minutes > 0)
-				return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-			return "Just now";
-		};
-
 		let keyAmount = 0;
 		for (const game of games as IGame[]) {
 			keyAmount += game.apiKeys.length;
@@ -61,7 +47,7 @@ export async function getDashboardData(ownerSlackId: string) {
 			totalGames,
 			totalPlayers,
 			activePlayers,
-			lastPlayed: getTimeSinceLastPlayed(),
+			lastPlayed: timeSince(lastPlayedGame.lastPlayedAt),
 			averageSessionTime:
 				avgSessionTime > 0
 					? `${Math.round(avgSessionTime / 60)} min`
