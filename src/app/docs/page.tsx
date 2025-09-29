@@ -1,7 +1,6 @@
 import Footer from "@/components/Footer";
 import GradientBackground from "@/components/GradientBackground";
 import Navbar from "@/components/Navbar";
-import Link from "next/link";
 
 type RouteDoc = {
 	method: string;
