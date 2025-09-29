@@ -24,7 +24,7 @@ const Navbar = () => {
 						Pricing
 					</Link>
 					<Link
-						href="/api"
+						href="/api/v1"
 						className="text-neutral-700 dark:text-neutral-300 hover:text-pink-600 dark:hover:text-pink-400 font-medium transition-colors duration-300"
 					>
 						API
