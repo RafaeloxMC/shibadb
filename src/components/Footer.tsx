@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => (
 	<footer className="border-t border-neutral-200/50 dark:border-neutral-800/50 bg-white/30 dark:bg-neutral-900/30 backdrop-blur-sm">
 		<div className="max-w-6xl mx-auto px-4 py-12">
@@ -12,18 +14,18 @@ const Footer = () => (
 						data with ease.
 					</p>
 					<div className="flex space-x-4">
-						<a
+						<Link
 							href="https://github.com/RafaeloxMC/shibadb"
 							className="text-neutral-400 hover:text-pink-500 transition-colors"
 						>
 							GitHub
-						</a>
-						<a
+						</Link>
+						<Link
 							href="https://hackclub.slack.com/archives/C09H3QZNA20"
 							className="text-neutral-400 hover:text-pink-500 transition-colors"
 						>
 							Slack
-						</a>
+						</Link>
 					</div>
 				</div>
 
@@ -33,28 +35,28 @@ const Footer = () => (
 					</h4>
 					<ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
 						<li>
-							<a
+							<Link
 								href="/docs"
 								className="hover:text-pink-500 transition-colors"
 							>
 								API Docs
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/pricing"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Pricing
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="https://downforeveryoneorjustme.com/shibadb.xvcf.dev"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Status
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</div>
@@ -64,28 +66,28 @@ const Footer = () => (
 					</h4>
 					<ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
 						<li>
-							<a
+							<Link
 								href="#"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Getting Started
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="#"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Examples
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="https://hackclub.com"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Hack Club
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</div>

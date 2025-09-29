@@ -2,6 +2,7 @@ import GradientBackground from "@/components/GradientBackground";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Slack } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
 	return (
@@ -20,13 +21,14 @@ export default function LoginPage() {
 						</div>
 
 						<div className="bg-white/70 dark:bg-neutral-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 dark:border-neutral-700/30">
-							<a
+							<Link
 								href="/api/v1/auth/slack"
+								prefetch={false}
 								className="w-full flex items-center justify-center px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 space-x-3"
 							>
 								<Slack />
 								<span>Continue with Slack</span>
-							</a>
+							</Link>
 						</div>
 					</div>
 				</main>

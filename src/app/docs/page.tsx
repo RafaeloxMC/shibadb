@@ -69,7 +69,7 @@ const docsSections = [
 export default function DocsPage() {
 	return (
 		<GradientBackground>
-			<Navbar /> {/* Wrap in your gradient background for consistency */}
+			<Navbar />
 			<div className="min-h-screen py-12 px-6 max-w-4xl mx-auto">
 				<h1 className="text-4xl font-bold text-center mb-8 text-neutral-900 dark:text-white">
 					Documentation
@@ -90,23 +90,6 @@ export default function DocsPage() {
 						</section>
 					))}
 				</div>
-				{/* <nav className="mt-12 text-center">
-					<h3 className="text-xl font-semibold mb-4 text-neutral-900 dark:text-white">
-						Quick Links
-					</h3>
-					<ul className="flex justify-center space-x-6">
-						{docsSections.map((section) => (
-							<li key={section.id}>
-								<a
-									href={`#${section.id}`}
-									className="text-blue-600 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-100 underline"
-								>
-									{section.title}
-								</a>
-							</li>
-						))}
-					</ul>
-				</nav> */}
 			</div>
 			<Footer />
 		</GradientBackground>
