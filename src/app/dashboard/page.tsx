@@ -13,6 +13,8 @@ import Games from "@/components/dashboard/Games";
 import Game, { IGame } from "@/database/schemas/Game";
 import Image from "next/image";
 import Link from "next/link";
+import GameInfo from "@/components/dashboard/GameInfo";
+import Keys from "@/components/dashboard/Keys";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockUser: IUser = {
@@ -28,9 +30,10 @@ const mockUser: IUser = {
 
 interface DashboardProps {
 	page: string | undefined;
+	id: string | undefined;
 }
 
-async function Dashboard({ page }: DashboardProps) {
+async function Dashboard({ page, id }: DashboardProps) {
 	if (!page) page = "home";
 	const getAuthenticatedUser = async () => {
 		try {
@@ -62,8 +65,24 @@ async function Dashboard({ page }: DashboardProps) {
 
 	const getUserGames = async (user: IUser) => {
 		try {
-			const games = await Game.find({ ownerSlackId: user.slackId });
-			return games as IGame[];
+			const games = await Game.find({
+				ownerSlackId: user.slackId,
+			}).lean();
+
+			const plainGames = (games as IGame[]).map((game) => ({
+				...game,
+				_id: game._id?.toString?.() ?? game._id,
+				createdAt:
+					game.createdAt instanceof Date
+						? game.createdAt.toISOString()
+						: game.createdAt,
+				updatedAt:
+					game.updatedAt instanceof Date
+						? game.updatedAt.toISOString()
+						: game.updatedAt,
+			}));
+
+			return plainGames;
 		} catch {
 			console.error("Error while loading user games!");
 			return null;
@@ -80,7 +99,26 @@ async function Dashboard({ page }: DashboardProps) {
 	if (page == "home") {
 		pageComponent = <Home user={user as IUser} />;
 	} else if (page == "games") {
-		pageComponent = <Games games={(await getUserGames(user)) as IGame[]} />;
+		if (id == "") {
+			pageComponent = (
+				<Games
+					games={(await getUserGames(user)) as unknown as IGame[]}
+				/>
+			);
+		} else {
+			const game = (await getUserGames(user))?.find(
+				(game) => game._id == id
+			) as unknown as IGame;
+
+			pageComponent = <GameInfo game={game} />;
+		}
+	} else if (page == "keys") {
+		if (id != "") {
+			const game = (await getUserGames(user))?.find(
+				(game) => game._id == id
+			) as unknown as IGame;
+			pageComponent = <Keys gameId={id || ""} apiKeys={game.apiKeys} />;
+		}
 	} else {
 		pageComponent = <Home user={user as IUser} />;
 	}

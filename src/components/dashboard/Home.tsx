@@ -105,11 +105,10 @@ export default async function Home({ user }: HomeProps) {
 									</span>
 								</div>
 							</div>
-							<Link
-								href={"/dashboard/games"}
-								className="w-full mt-4 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300"
-							>
-								Manage Games
+							<Link href="/dashboard/games">
+								<button className="w-full mt-4 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300 text-center block cursor-pointer">
+									Manage Games
+								</button>
 							</Link>
 						</div>
 
@@ -146,7 +145,7 @@ export default async function Home({ user }: HomeProps) {
 								</div>
 							</div>
 							<button className="w-full mt-4 px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300">
-								Manage Users
+								Manage Users - Soon ™️
 							</button>
 						</div>
 
@@ -183,7 +182,7 @@ export default async function Home({ user }: HomeProps) {
 								</div>
 							</div>
 							<button className="w-full mt-4 px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors duration-300">
-								Manage API Keys
+								Manage API Keys - Soon ™️
 							</button>
 						</div>
 
@@ -220,7 +219,7 @@ export default async function Home({ user }: HomeProps) {
 								</div>
 							</div>
 							<button className="w-full mt-4 px-4 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors duration-300">
-								View Database
+								View Database - Soon ™️
 							</button>
 						</div>
 
@@ -257,7 +256,7 @@ export default async function Home({ user }: HomeProps) {
 								</div>
 							</div>
 							<button className="w-full mt-4 px-4 py-2 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-300">
-								View Analytics
+								View Analytics - Soon ™️
 							</button>
 						</div>
 
@@ -294,7 +293,7 @@ export default async function Home({ user }: HomeProps) {
 								</div>
 							</div>
 							<button className="w-full mt-4 px-4 py-2 bg-neutral-500 text-white font-medium rounded-lg hover:bg-neutral-600 transition-colors duration-300">
-								Manage Settings
+								Manage Settings - Soon ™️
 							</button>
 						</div>
 					</div>

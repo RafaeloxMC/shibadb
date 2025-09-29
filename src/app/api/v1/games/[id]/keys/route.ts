@@ -1,6 +1,7 @@
 import { connectDB } from "@/database/database";
 import Game from "@/database/schemas/Game";
 import { generateGameToken, getTokenPayload } from "@/util/secureTokens";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -27,7 +28,7 @@ export async function PUT(
 		}
 
 		const game = await Game.findOne({
-			_id: (await params).id,
+			_id: new Types.ObjectId((await params).id),
 			ownerSlackId: payload.slackId,
 		}).select("-__v");
 
@@ -73,7 +74,7 @@ export async function POST(
 		}
 
 		const game = await Game.findOne({
-			_id: (await params).id,
+			_id: new Types.ObjectId((await params).id),
 		}).select("-__v");
 
 		if (!game) {
@@ -141,7 +142,7 @@ export async function DELETE(
 		}
 
 		const game = await Game.findOne({
-			_id: (await params).id,
+			_id: new Types.ObjectId((await params).id),
 			ownerSlackId: payload.slackId,
 		}).select("-__v");
 

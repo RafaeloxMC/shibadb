@@ -1,6 +1,7 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface IGame extends Document {
+	_id: Types.ObjectId;
 	ownerSlackId: string;
 	name: string;
 	description: string;

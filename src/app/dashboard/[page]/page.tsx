@@ -2,7 +2,7 @@ import React from "react";
 import Dashboard from "../page";
 
 async function Page({ params }: { params: Promise<{ page: string }> }) {
-	return <Dashboard page={(await params).page} />;
+	return <Dashboard page={(await params).page} id="" />;
 }
 
 export default Page;

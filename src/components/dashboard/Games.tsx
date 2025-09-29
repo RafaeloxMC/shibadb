@@ -183,15 +183,9 @@ export default function Games({ games }: GameProps) {
 						<div className="mt-4 flex gap-3">
 							<Link
 								href={`/dashboard/games/${encodeURIComponent(
-									game.ownerSlackId + "-" + game.name
+									game._id.toString()
 								)}`}
-								className="flex-1 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300 text-center"
-							>
-								Open
-							</Link>
-							<Link
-								href="#"
-								className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-200 flex items-center gap-2"
+								className="w-full px-4 py-2 bg-pink-500 text-neutral-900 dark:text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-200 flex items-center justify-center gap-2"
 							>
 								<TerminalSquare className="w-4 h-4" />
 								Manage

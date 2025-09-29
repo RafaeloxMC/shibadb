@@ -3,92 +3,190 @@ import GradientBackground from "@/components/GradientBackground";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
-const docsSections = [
+type RouteDoc = {
+	method: string;
+	path: string;
+	description: string;
+	requestExample?: string;
+	responseExample?: string;
+	source?: string;
+};
+
+const ROUTES: RouteDoc[] = [
 	{
-		id: "introduction",
-		title: "Introduction",
-		content: (
-			<div>
-				<p>
-					Welcome to the ShibaDB documentation. This guide will help
-					you get started with our platform.
-				</p>
-				<p>
-					ShibaDB is the ultimate database service for game developers
-					in the Hackclub Shiba programme.
-				</p>
-				<p>
-					<span className="font-bold">Please Note:</span> This is very
-					WIP and the API will receive breaking changes!
-				</p>
-			</div>
-		),
+		method: "GET",
+		path: "/api/v1",
+		description: "API root / status",
+		responseExample: `{"message":"ShibaDB API","version":0.1}`,
+		source: "/src/app/api/v1/route.ts",
 	},
 	{
-		id: "getting-started",
-		title: "Getting Started",
-		content: (
-			<div>
-				<h3 className="bold">Installation</h3>
-				<span className="italic">Placeholder data:</span>
-				<p>
-					Login to the <Link href={"/dashboard"}>dashboard</Link> to
-					create an API key
-				</p>
-				<p>
-					Pass the API key when creating the instance of ShibaDB in
-					Godot
-				</p>
-			</div>
-		),
+		method: "GET",
+		path: "/api/v1/auth/slack",
+		description: "Redirect to Slack OAuth (start flow).",
+		source: "/src/app/api/v1/auth/slack/route.ts",
 	},
 	{
-		id: "api-reference",
-		title: "API Reference",
-		content: (
-			<div>
-				<h3 className="bold">Core Functions</h3>
-				<span className="italic">Placeholder data:</span>
-				<ul>
-					<li>
-						<strong>connect(url)</strong>: Establishes a connection
-						to the database.
-					</li>
-					<li>
-						<strong>query(sql)</strong>: Executes a SQL query.
-					</li>
-					<li>
-						<strong>disconnect()</strong>: Closes the connection.
-					</li>
-				</ul>
-			</div>
-		),
+		method: "GET",
+		path: "/api/v1/auth/slack/callback",
+		description:
+			"OAuth callback: exchanges code, creates user & session, sets cookie and redirects to /dashboard.",
+		source: "/src/app/api/v1/auth/slack/callback/route.ts",
+	},
+	{
+		method: "GET | POST",
+		path: "/api/v1/auth/logout",
+		description:
+			"Logout endpoint: deletes session, clears cookie then redirects to /.",
+		source: "/src/app/api/v1/auth/logout/route.ts",
+	},
+	{
+		method: "GET",
+		path: "/api/v1/auth/me",
+		description:
+			"Returns the authenticated user (requires cookie or Authorization header).",
+		source: "/src/app/api/v1/auth/me/route.ts",
+	},
+	{
+		method: "GET",
+		path: "/api/v1/games",
+		description:
+			"List games for the authenticated user (pagination & filters supported).",
+		source: "/src/app/api/v1/games/route.ts",
+	},
+	{
+		method: "POST",
+		path: "/api/v1/games/new",
+		description:
+			"Create a new game for the authenticated user. Body: { name, description }",
+		requestExample: `{"name":"My Game","description":"Short description"}`,
+		source: "/src/app/api/v1/games/new/route.ts",
+	},
+	{
+		method: "GET | PUT | DELETE",
+		path: "/api/v1/games/:id",
+		description:
+			"Get, update or delete a single game. PUT accepts { name, description, config }.",
+		source: "/src/app/api/v1/games/[id]/route.ts",
+	},
+	{
+		method: "PUT",
+		path: "/api/v1/games/:id/keys",
+		description:
+			"Generate a new API key for the game (owner only). Returns { key }.",
+		source: "/src/app/api/v1/games/[id]/keys/route.ts",
+	},
+	{
+		method: "POST",
+		path: "/api/v1/games/:id/keys (validate)",
+		description:
+			"Validate an API key for a game (public validation). Body: { key }",
+		requestExample: `{"key":"SHIBADB-..."} `,
+		source: "/src/app/api/v1/games/[id]/keys/route.ts",
+	},
+	{
+		method: "DELETE",
+		path: "/api/v1/games/:id/keys",
+		description: "Remove an API key (owner only). Body: { key }",
+		source: "/src/app/api/v1/games/[id]/keys/route.ts",
+	},
+	{
+		method: "GET",
+		path: "/api/v1/games/:id/players",
+		description: "List players for a game (pagination, sort).",
+		source: "/src/app/api/v1/games/[id]/players/route.ts",
+	},
+	{
+		method: "POST",
+		path: "/api/v1/games/:id/players",
+		description:
+			"Create or update a player record (owner only). Body: { playerId, slackId?, gameData?, totalPlayTime? }",
+		requestExample: `{"playerId":"player1","gameData": {"score":100}}`,
+		source: "/src/app/api/v1/games/[id]/players/route.ts",
+	},
+	{
+		method: "GET | POST",
+		path: "/api/v1/games/:id/players/:playerId",
+		description:
+			"Get or create a specific player. POST can add a new player (owner only).",
+		source: "/src/app/api/v1/games/[id]/players/[playerId]/route.ts",
 	},
 ];
+
+function RouteCard({ r }: { r: RouteDoc }) {
+	return (
+		<div className="bg-white/80 dark:bg-neutral-800/60 rounded-lg p-4 shadow-md border border-neutral-200/50 dark:border-neutral-700/50">
+			<div className="flex items-baseline justify-between gap-4">
+				<span className="font-mono text-sm text-pink-600 dark:text-pink-400">
+					{r.method}
+				</span>
+				<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+					{r.path}
+				</h3>
+			</div>
+			<p className="text-neutral-600 dark:text-neutral-300 mt-2">
+				{r.description}
+			</p>
+			{r.requestExample && (
+				<>
+					<label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-3 block">
+						Request body
+					</label>
+					<pre className="bg-neutral-100 dark:bg-neutral-900 rounded-md p-2 mt-1 text-sm overflow-auto">
+						<code>{r.requestExample}</code>
+					</pre>
+				</>
+			)}
+			{r.responseExample && (
+				<>
+					<label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-3 block">
+						Response example
+					</label>
+					<pre className="bg-neutral-100 dark:bg-neutral-900 rounded-md p-2 mt-1 text-sm overflow-auto">
+						<code>{r.responseExample}</code>
+					</pre>
+				</>
+			)}
+			{r.source && (
+				<div className="mt-3 text-sm">
+					<span className="text-neutral-500 dark:text-neutral-400 block">
+						Source: <code className="text-sm">{r.source}</code>
+					</span>
+				</div>
+			)}
+		</div>
+	);
+}
 
 export default function DocsPage() {
 	return (
 		<GradientBackground>
 			<Navbar />
-			<div className="min-h-screen py-12 px-6 max-w-4xl mx-auto">
-				<h1 className="text-4xl font-bold text-center mb-8 text-neutral-900 dark:text-white">
-					Documentation
+			<div className="min-h-screen py-12 px-6 max-w-5xl mx-auto">
+				<h1 className="text-4xl font-bold text-center mb-6 text-neutral-900 dark:text-white">
+					API Documentation
 				</h1>
-				<div className="space-y-12">
-					{docsSections.map((section) => (
-						<section
-							key={section.id}
-							id={section.id}
-							className="bg-neutral-50 dark:bg-neutral-800/50 backdrop-blur-md rounded-lg p-6 shadow-lg"
-						>
-							<h2 className="text-2xl font-semibold mb-4 text-neutral-900 dark:text-white">
-								{section.title}
-							</h2>
-							<div className="text-neutral-700 dark:text-neutral-200 prose max-w-none">
-								{section.content}
-							</div>
-						</section>
+
+				<p className="text-center text-neutral-600 dark:text-neutral-400 mb-8">
+					This page lists the current server API routes implemented in
+					the codebase. Use the dashboard to manage games & API keys
+					and the OAuth flow for authentication.
+				</p>
+
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					{ROUTES.map((r) => (
+						<RouteCard key={r.path + r.method} r={r} />
 					))}
+				</div>
+
+				<div className="mt-10 prose text-neutral-700 dark:text-neutral-300">
+					<h2 className="text-4xl font-bold">Authentication notes</h2>
+					<p>
+						Routes that require a logged-in user check for the{" "}
+						<code>shibaCookie</code> session cookie or a Bearer
+						token in the Authorization header. Sessions are created
+						in the Slack callback flow.
+					</p>
 				</div>
 			</div>
 			<Footer />
