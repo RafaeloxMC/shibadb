@@ -18,7 +18,7 @@ const CallToAction = () => (
 				</a>
 
 				<a
-					href="#"
+					href="/docs"
 					className="px-8 py-4 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-200 dark:border-neutral-700 hover:border-pink-300 dark:hover:border-pink-500"
 				>
 					View Documentation
