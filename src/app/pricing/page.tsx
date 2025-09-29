@@ -8,14 +8,12 @@ import React from "react";
 function PricingPage() {
 	return (
 		<GradientBackground>
-			<div className="min-h-screen flex flex-col">
-				<Navbar />
-				<main className="flex flex-col flex-grow">
-					<Pricing />
-					<CallToAction />
-				</main>
-				<Footer />
-			</div>
+			<Navbar />
+			<main className="flex flex-col flex-grow">
+				<Pricing />
+				<CallToAction />
+			</main>
+			<Footer />
 		</GradientBackground>
 	);
 }
