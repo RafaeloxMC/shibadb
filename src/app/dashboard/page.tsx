@@ -167,7 +167,9 @@ async function Dashboard({ page, id }: DashboardProps) {
 					</div>
 				</div>
 			</nav>
-			<main className="flex-grow">{pageComponent}</main>
+			<main className="flex-grow items-center justify-center">
+				{pageComponent}
+			</main>
 			<Footer />
 		</GradientBackground>
 	);
