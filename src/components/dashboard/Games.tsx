@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Gamepad2, TerminalSquare } from "lucide-react";
 import { timeSince } from "@/util/time";
 
-export const mockGames = [
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockGames = [
 	{
 		ownerSlackId: "U1234567890",
 		name: "Shiba Runner",

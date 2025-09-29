@@ -26,7 +26,7 @@ export async function getDashboardData(ownerSlackId: string) {
 				(a, b) =>
 					new Date(b.lastPlayedAt!).getTime() -
 					new Date(a.lastPlayedAt!).getTime()
-			)[0];
+			)[0] || { lastPlayedAt: undefined };
 
 		const avgSessionTime =
 			games.length > 0
@@ -57,11 +57,12 @@ export async function getDashboardData(ownerSlackId: string) {
 	} catch (error) {
 		console.error("Error fetching dashboard data:", error);
 		return {
-			totalGames: 12,
-			totalPlayers: 247,
-			activePlayers: 89,
-			lastPlayed: "2 minutes ago",
-			averageSessionTime: "14 min",
+			totalGames: 0,
+			totalPlayers: 0,
+			activePlayers: 0,
+			lastPlayed: "N/A",
+			averageSessionTime: "N/A",
+			keyAmount: 0,
 		};
 	}
 }

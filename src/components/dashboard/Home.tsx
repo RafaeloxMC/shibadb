@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { IUser } from "@/database/schemas/User";
 import { getDashboardData } from "@/util/dashboard";
+import Link from "next/link";
 
 interface HomeProps {
 	user: IUser;
@@ -104,9 +105,12 @@ export default async function Home({ user }: HomeProps) {
 									</span>
 								</div>
 							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300">
+							<Link
+								href={"/dashboard/games"}
+								className="w-full mt-4 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300"
+							>
 								Manage Games
-							</button>
+							</Link>
 						</div>
 
 						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
