@@ -34,7 +34,7 @@ const Footer = () => (
 					<ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
 						<li>
 							<a
-								href="#"
+								href="/docs"
 								className="hover:text-pink-500 transition-colors"
 							>
 								API Docs
@@ -50,7 +50,7 @@ const Footer = () => (
 						</li>
 						<li>
 							<a
-								href="#"
+								href="https://downforeveryoneorjustme.com/shibadb.xvcf.dev"
 								className="hover:text-pink-500 transition-colors"
 							>
 								Status
