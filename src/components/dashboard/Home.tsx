@@ -7,8 +7,6 @@ import {
 	Users2,
 } from "lucide-react";
 import { IUser } from "@/database/schemas/User";
-import Image from "next/image";
-import Link from "next/link";
 import { getDashboardData } from "@/util/dashboard";
 
 interface HomeProps {
@@ -21,49 +19,6 @@ export default async function Home({ user }: HomeProps) {
 	return (
 		<>
 			<div className="min-h-screen">
-				<nav className="relative z-20 w-full px-6 py-4 border-b border-neutral-200 dark:border-neutral-700/50">
-					<div className="max-w-7xl mx-auto flex items-center justify-between">
-						<Link
-							href="/"
-							className="flex items-center space-x-2 group"
-						>
-							<div className="text-2xl font-black text-pink-600 dark:text-pink-400 transition-colors duration-300 group-hover:text-pink-700 dark:group-hover:text-pink-300">
-								ShibaDB
-							</div>
-							<span className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">
-								Dashboard
-							</span>
-						</Link>
-
-						<div className="flex items-center space-x-4">
-							{user.avatar && (
-								<Image
-									src={user.avatar}
-									alt={user.name || "User"}
-									width={32}
-									height={32}
-									className="w-8 h-8 rounded-full border-2 border-pink-200 dark:border-pink-700"
-								/>
-							)}
-							<span className="text-neutral-700 dark:text-neutral-300 font-medium">
-								{user.name || "User"}
-							</span>
-							{!user && (
-								<span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full">
-									Mock Data
-								</span>
-							)}
-							<Link
-								href="/api/v1/auth/logout"
-								prefetch={false}
-								className="px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:text-pink-600 dark:hover:text-pink-400 font-medium transition-colors duration-300"
-							>
-								Logout
-							</Link>
-						</div>
-					</div>
-				</nav>
-
 				<div className="max-w-7xl mx-auto px-6 py-8">
 					<div className="mb-8">
 						<h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
