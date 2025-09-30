@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { IGame } from "@/database/schemas/Game";
 import { timeSince } from "@/util/time";
+import DeleteGameButton from "./DeleteGameButton";
 
 type Props = {
 	game: IGame;
@@ -89,14 +90,7 @@ export default function GameInfo({ game }: Props) {
 							>
 								API Keys
 							</Link>
-							<Link
-								href={`/dashboard/games/${encodeURIComponent(
-									game._id.toString()
-								)}`}
-								className="text-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-							>
-								Delete - Soon ™️
-							</Link>
+							<DeleteGameButton gameId={game._id.toString()} />
 						</div>
 					</div>
 
