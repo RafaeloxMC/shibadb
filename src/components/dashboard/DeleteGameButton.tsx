@@ -19,7 +19,7 @@ export default function DeleteGameButton({ gameId }: Props) {
 	return (
 		<button
 			type="button"
-			className="text-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+			className="text-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 cursor-pointer"
 			onClick={handleDelete}
 		>
 			Delete

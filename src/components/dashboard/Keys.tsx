@@ -19,6 +19,8 @@ export default function Keys({ gameId, apiKeys = [] }: KeysProps) {
 	const [revokeIndex, setRevokeIndex] = useState<number | null>(null);
 	const [revealRevoke, setRevealRevoke] = useState(false);
 
+	const [copyButtonText, setCopyButtonText] = useState("Copy");
+
 	async function createKey() {
 		setCreating(true);
 		setError(null);
@@ -286,15 +288,22 @@ export default function Keys({ gameId, apiKeys = [] }: KeysProps) {
 										{recentKey}
 									</pre>
 								</div>
-								<div className="flex flex-col items-end gap-2">
+								<div className="flex flex-row items-end gap-2">
 									<button
-										className="px-3 py-2 bg-green-500 text-white rounded cursor-pointer hover:bg-green-600 transition-colors duration-200"
-										onClick={copyRecent}
+										className="px-3 py-2 bg-green-500 text-white text-sm rounded-lg cursor-pointer hover:bg-green-600 transition-colors duration-200"
+										onClick={() => {
+											copyRecent();
+											setCopyButtonText("Copied!");
+											setTimeout(
+												() => setCopyButtonText("Copy"),
+												1000
+											);
+										}}
 									>
-										Copy
+										{copyButtonText}
 									</button>
 									<button
-										className="px-3 py-2 bg-neutral-200 dark:bg-neutral-700 rounded text-sm cursor-pointer hover:bg-neutral-300 dark:hover:bg-neutral-800 transition-colors duration-200"
+										className="px-3 py-2 bg-neutral-200 dark:bg-neutral-700 text-sm rounded-lg cursor-pointer hover:bg-neutral-300 dark:hover:bg-neutral-800 transition-colors duration-200"
 										onClick={() => setShowRecent(false)}
 									>
 										Dismiss

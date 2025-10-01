@@ -73,14 +73,14 @@ export default function GameInfo({ game }: Props) {
 							</span>
 						</div>
 
-						<div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+						<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 							<Link
-								href={`/dashboard/games/${encodeURIComponent(
+								href={`/dashboard/players/${encodeURIComponent(
 									game._id.toString()
-								)}/players`}
+								)}`}
 								className="text-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
 							>
-								Players - Soon ™️
+								Players
 							</Link>
 							<Link
 								href={`/dashboard/keys/${encodeURIComponent(
@@ -89,6 +89,14 @@ export default function GameInfo({ game }: Props) {
 								className="text-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
 							>
 								API Keys
+							</Link>
+							<Link
+								href={`/dashboard/data/${encodeURIComponent(
+									game._id.toString()
+								)}`}
+								className="text-center px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+							>
+								Database
 							</Link>
 							<DeleteGameButton gameId={game._id.toString()} />
 						</div>

@@ -15,6 +15,8 @@ import Image from "next/image";
 import Link from "next/link";
 import GameInfo from "@/components/dashboard/GameInfo";
 import Keys from "@/components/dashboard/Keys";
+import Players from "@/components/dashboard/Players";
+import Database from "@/components/dashboard/Database";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockUser: IUser = {
@@ -119,6 +121,30 @@ async function Dashboard({ page, id }: DashboardProps) {
 			) as unknown as IGame;
 			pageComponent = <Keys gameId={id || ""} apiKeys={game.apiKeys} />;
 		}
+	} else if (page == "players") {
+		if (id != "") {
+			const game = (await getUserGames(user))?.find(
+				(game) => game._id == id
+			) as unknown as IGame;
+			pageComponent = (
+				<Players
+					playerData={{
+						totalPlayers: game.totalPlayers,
+						activePlayers: game.activePlayers,
+						totalSessions: game.totalSessions,
+						averageSessionTime: game.averageSessionTime,
+						lastPlayedAt: game.lastPlayedAt,
+					}}
+				/>
+			);
+		}
+	} else if (page == "data") {
+		if (id != "") {
+			const game = (await getUserGames(user))?.find(
+				(game) => game._id == id
+			) as unknown as IGame;
+			pageComponent = <Database gameId={id || ""} gameName={game.name} />;
+		}
 	} else {
 		pageComponent = <Home user={user as IUser} />;
 	}
@@ -138,6 +164,10 @@ async function Dashboard({ page, id }: DashboardProps) {
 							Dashboard
 						</span>
 					</Link>
+
+					<span className="ml-4 text-sm text-neutral-500 dark:text-neutral-400 font-medium">
+						Go back
+					</span>
 
 					<div className="flex items-center space-x-4">
 						{user.avatar && (
