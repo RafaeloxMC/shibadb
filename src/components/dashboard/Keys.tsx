@@ -102,6 +102,29 @@ export default function Keys({ gameId, apiKeys = [] }: KeysProps) {
 		setError(null);
 	}
 
+	async function revokeAll() {
+		const res = await fetch(
+			`/api/v1/games/${encodeURIComponent(gameId)}/keys`,
+			{
+				method: "DELETE",
+				credentials: "include",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					key: "DELETE_ALL_THIS_ACTION_IS_IRREVERSIBLE",
+				}),
+			}
+		);
+		const data = await res.json();
+
+		if (!res.ok) {
+			setError(
+				data?.error || data?.message || "Failed to revoke all keys"
+			);
+			return;
+		}
+		setCount(0);
+	}
+
 	function copyRecent() {
 		if (!recentKey) return;
 		navigator.clipboard?.writeText(recentKey);
@@ -135,6 +158,13 @@ export default function Keys({ gameId, apiKeys = [] }: KeysProps) {
 								disabled={revoking}
 							>
 								{revoking ? "Revoking..." : "Revoke key"}
+							</button>
+							<button
+								className="px-4 py-2 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 hover:dark:bg-neutral-800 cursor-pointer rounded-lg transition-colors duration-200"
+								onClick={() => revokeAll()}
+								disabled={revoking}
+							>
+								{revoking ? "Revoking..." : "Revoke all"}
 							</button>
 						</div>
 					</div>

@@ -155,6 +155,11 @@ export async function DELETE(
 
 		const apiKeys = game.apiKeys;
 
+		if (body.key === "DELETE_ALL_THIS_ACTION_IS_IRREVERSIBLE") {
+			await game.updateOne({ apiKeys: [] });
+			return NextResponse.json({ message: "Success" }, { status: 200 });
+		}
+
 		if (apiKeys.includes(body.key)) {
 			const updatedKeys = apiKeys.filter(
 				(key: string) => key !== body.key
