@@ -6,9 +6,11 @@ export async function getDashboardData(ownerSlackId: string) {
 	try {
 		await connectDB();
 
-		const games = (await Game.find({ ownerSlackId }).select(
-			"totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt apiKeys"
-		)) as IGame[];
+		const games = (await Game.find({ ownerSlackId })
+			.select(
+				"name totalPlayers activePlayers totalSessions averageSessionTime lastPlayedAt apiKeys createdAt"
+			)
+			.lean()) as IGame[];
 
 		const totalGames = games.length;
 		const totalPlayers = games.reduce(
@@ -53,6 +55,16 @@ export async function getDashboardData(ownerSlackId: string) {
 					? `${Math.round(avgSessionTime / 60)} min`
 					: "0 min",
 			keyAmount,
+			games: games.map((game) => ({
+				id: game._id?.toString(),
+				name: game.name,
+				totalPlayers: game.totalPlayers || 0,
+				activePlayers: game.activePlayers || 0,
+				totalSessions: game.totalSessions || 0,
+				apiKeys: game.apiKeys?.length || 0,
+				lastPlayedAt: game.lastPlayedAt,
+				createdAt: game.createdAt,
+			})),
 		};
 	} catch (error) {
 		console.error("Error fetching dashboard data:", error);
@@ -63,6 +75,7 @@ export async function getDashboardData(ownerSlackId: string) {
 			lastPlayed: "N/A",
 			averageSessionTime: "N/A",
 			keyAmount: 0,
+			games: [],
 		};
 	}
 }

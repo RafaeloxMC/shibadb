@@ -1,11 +1,4 @@
-import {
-	ChartNoAxesCombined,
-	Cog,
-	DatabaseZapIcon,
-	Gamepad2,
-	TerminalSquare,
-	Users2,
-} from "lucide-react";
+import { Gamepad2, Users, Key, Activity } from "lucide-react";
 import { IUser } from "@/database/schemas/User";
 import { getDashboardData } from "@/util/dashboard";
 import Link from "next/link";
@@ -72,230 +65,181 @@ export default async function Home({ user }: HomeProps) {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
+					<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6">
+						<div className="flex items-center justify-between mb-6">
+							<div className="flex items-center space-x-3">
 								<div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center">
 									<Gamepad2 className="w-6 h-6 text-pink-600 dark:text-pink-400" />
 								</div>
 								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										Games
-									</h3>
+									<h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+										My Games
+									</h2>
 									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										Manage game instances
+										{dashboardData.totalGames} active{" "}
+										{dashboardData.totalGames === 1
+											? "game"
+											: "games"}
 									</p>
 								</div>
 							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Active Games
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.totalGames}
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Total Players
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.totalPlayers}
-									</span>
-								</div>
-							</div>
 							<Link href="/dashboard/games">
-								<button className="w-full mt-4 px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300 text-center block cursor-pointer">
-									Manage Games
+								<button className="px-4 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300">
+									View All Games
 								</button>
 							</Link>
 						</div>
 
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
-								<div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-									<Users2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-								</div>
-								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										Users
-									</h3>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										User management
-									</p>
-								</div>
+						{dashboardData.totalGames === 0 ? (
+							<div className="text-center py-12">
+								<Gamepad2 className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
+								<h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
+									No games yet
+								</h3>
+								<p className="text-neutral-600 dark:text-neutral-400 mb-4">
+									Create your first game to get started
+								</p>
+								<Link href="/dashboard/games">
+									<button className="px-6 py-2 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition-colors duration-300">
+										Create Game
+									</button>
+								</Link>
 							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Total Users
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.totalPlayers}
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Active Today
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.activePlayers}
-									</span>
-								</div>
-							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors duration-300">
-								Manage Users - Soon ™️
-							</button>
-						</div>
+						) : (
+							<div className="space-y-3">
+								{dashboardData.games.map((game) => (
+									<div
+										key={game.id}
+										className="bg-neutral-50 dark:bg-neutral-900/50 rounded-lg p-5 border border-neutral-200/50 dark:border-neutral-700/50 hover:shadow-md transition-all duration-300"
+									>
+										<div className="flex items-center justify-between mb-4">
+											<div>
+												<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+													{game.name}
+												</h3>
+												<p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+													Created{" "}
+													{game.createdAt
+														? new Date(
+																game.createdAt
+														  ).toLocaleDateString()
+														: "N/A"}
+												</p>
+											</div>
+											<Link
+												href={`/dashboard/games/${game.id}`}
+											>
+												<button className="px-4 py-2 text-sm bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white font-medium rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors duration-300">
+													View Details
+												</button>
+											</Link>
+										</div>
 
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
-								<div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-									<TerminalSquare className="w-6 h-6 text-green-600 dark:text-green-400" />
-								</div>
-								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										API Keys
-									</h3>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										Manage API access
-									</p>
-								</div>
-							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Active Keys
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.keyAmount || 0}
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Requests Today
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										1,542
-									</span>
-								</div>
-							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors duration-300">
-								Manage API Keys - Soon ™️
-							</button>
-						</div>
+										<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+											<div className="flex items-center space-x-2">
+												<div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+													<Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+												</div>
+												<div>
+													<p className="text-xs text-neutral-500 dark:text-neutral-400">
+														Total Players
+													</p>
+													<p className="text-sm font-semibold text-neutral-900 dark:text-white">
+														{game.totalPlayers}
+													</p>
+												</div>
+											</div>
 
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
-								<div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-									<DatabaseZapIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-								</div>
-								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										Database
-									</h3>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										Storage & performance
-									</p>
-								</div>
-							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Storage Used
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										2.4 MB
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Collections
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										8
-									</span>
-								</div>
-							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors duration-300">
-								View Database - Soon ™️
-							</button>
-						</div>
+											<div className="flex items-center space-x-2">
+												<div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+													<Activity className="w-4 h-4 text-green-600 dark:text-green-400" />
+												</div>
+												<div>
+													<p className="text-xs text-neutral-500 dark:text-neutral-400">
+														Active Today
+													</p>
+													<p className="text-sm font-semibold text-neutral-900 dark:text-white">
+														{game.activePlayers}
+													</p>
+												</div>
+											</div>
 
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
-								<div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
-									<ChartNoAxesCombined className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-								</div>
-								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										Analytics
-									</h3>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										Usage insights
-									</p>
-								</div>
-							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Last Played
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.lastPlayed}
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Average Time
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										{dashboardData.averageSessionTime}
-									</span>
-								</div>
-							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-300">
-								View Analytics - Soon ™️
-							</button>
-						</div>
+											<div className="flex items-center space-x-2">
+												<div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+													<Gamepad2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+												</div>
+												<div>
+													<p className="text-xs text-neutral-500 dark:text-neutral-400">
+														Sessions
+													</p>
+													<p className="text-sm font-semibold text-neutral-900 dark:text-white">
+														{game.totalSessions}
+													</p>
+												</div>
+											</div>
 
-						<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-							<div className="flex items-center space-x-3 mb-4">
-								<div className="w-12 h-12 bg-neutral-500/20 rounded-xl flex items-center justify-center">
-									<Cog className="w-6 h-6 text-neutral-600 dark:text-neutral-400" />
-								</div>
-								<div>
-									<h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-										Settings
+											<div className="flex items-center space-x-2">
+												<div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center">
+													<Key className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+												</div>
+												<div>
+													<p className="text-xs text-neutral-500 dark:text-neutral-400">
+														API Keys
+													</p>
+													<p className="text-sm font-semibold text-neutral-900 dark:text-white">
+														{game.apiKeys}
+													</p>
+												</div>
+											</div>
+										</div>
+
+										{game.lastPlayedAt && (
+											<div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-700">
+												<p className="text-xs text-neutral-500 dark:text-neutral-400">
+													Last played:{" "}
+													{new Date(
+														game.lastPlayedAt
+													).toLocaleString()}
+												</p>
+											</div>
+										)}
+									</div>
+								))}
+
+								{/* Summary Card */}
+								<div className="bg-pink-500/20 rounded-lg p-5 border border-pink-200/50 dark:border-pink-700/50 mt-4">
+									<h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
+										Total Statistics
 									</h3>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										Account & preferences
-									</p>
+									<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+										<div>
+											<p className="text-xs text-neutral-600 dark:text-neutral-400">
+												Total Players
+											</p>
+											<p className="text-xl font-bold text-neutral-900 dark:text-white">
+												{dashboardData.totalPlayers}
+											</p>
+										</div>
+										<div>
+											<p className="text-xs text-neutral-600 dark:text-neutral-400">
+												Active Today
+											</p>
+											<p className="text-xl font-bold text-neutral-900 dark:text-white">
+												{dashboardData.activePlayers}
+											</p>
+										</div>
+										<div>
+											<p className="text-xs text-neutral-600 dark:text-neutral-400">
+												Total API Keys
+											</p>
+											<p className="text-xl font-bold text-neutral-900 dark:text-white">
+												{dashboardData.keyAmount}
+											</p>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Theme
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										Auto
-									</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-neutral-600 dark:text-neutral-400">
-										Notifications
-									</span>
-									<span className="font-medium text-neutral-900 dark:text-white">
-										Enabled
-									</span>
-								</div>
-							</div>
-							<button className="w-full mt-4 px-4 py-2 bg-neutral-500 text-white font-medium rounded-lg hover:bg-neutral-600 transition-colors duration-300">
-								Manage Settings - Soon ™️
-							</button>
-						</div>
+						)}
 					</div>
 				</div>
 			</div>
