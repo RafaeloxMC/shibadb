@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/database";
 import Game from "@/database/schemas/Game";
 import Save from "@/database/schemas/Save";
+import { checkDefined } from "@/util/definedChecker";
+import { requireAuth } from "@/middleware";
 
 export async function GET(
 	request: NextRequest,
@@ -10,23 +12,15 @@ export async function GET(
 	try {
 		await connectDB();
 
+		const authResult = await requireAuth(request);
+
+		if ("error" in authResult) {
+			return authResult.error;
+		}
+
+		const { user } = authResult;
+
 		const { id: gameId } = await params;
-		const slackId = request.headers.get("x-slack-user-id");
-		const playerSlackId = request.nextUrl.searchParams.get("playerSlackId");
-
-		if (!slackId) {
-			return NextResponse.json(
-				{ error: "Slack user ID is required" },
-				{ status: 401 }
-			);
-		}
-
-		if (!playerSlackId) {
-			return NextResponse.json(
-				{ error: "playerSlackId query parameter is required" },
-				{ status: 400 }
-			);
-		}
 
 		const game = await Game.findById(gameId);
 		if (!game) {
@@ -36,21 +30,9 @@ export async function GET(
 			);
 		}
 
-		const isCreator = game.ownerSlackId === slackId;
-		const isPlayer = playerSlackId === slackId;
-
-		if (!isCreator && !isPlayer) {
-			return NextResponse.json(
-				{
-					error: "Unauthorized",
-				},
-				{ status: 403 }
-			);
-		}
-
 		const saves = await Save.find({
 			gameId,
-			playerSlackId,
+			playerSlackId: user.slackId,
 		}).sort({ lastPlayed: -1 });
 
 		return NextResponse.json({
@@ -59,6 +41,87 @@ export async function GET(
 		});
 	} catch (error) {
 		console.error("Error fetching save data:", error);
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 }
+		);
+	}
+}
+
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> }
+) {
+	try {
+		await connectDB();
+
+		const authResult = await requireAuth(request);
+
+		if ("error" in authResult) {
+			return authResult.error;
+		}
+
+		const { user } = authResult;
+
+		const { id: gameId } = await params;
+		const body = await request.json();
+
+		const errRes = checkDefined({
+			saveData: body.saveData,
+		});
+
+		if (errRes) {
+			return errRes;
+		}
+
+		const { saveName, saveData, version } = body;
+
+		const game = await Game.findById(gameId);
+		if (!game) {
+			return NextResponse.json(
+				{ error: "Game not found" },
+				{ status: 404 }
+			);
+		}
+
+		let save = await Save.findOne({
+			gameId,
+			playerSlackId: user.slackId,
+			saveName: saveName || "Untitled Save",
+		});
+
+		if (save) {
+			save.saveData = { ...save.saveData, ...saveData };
+			save.lastPlayed = new Date();
+			if (version) save.version = version;
+			await save.save();
+
+			return NextResponse.json({
+				success: true,
+				message: "Save updated successfully",
+				data: save,
+			});
+		} else {
+			save = await Save.create({
+				gameId,
+				playerSlackId: user.slackId,
+				saveName: saveName || "Untitled Save",
+				saveData,
+				version,
+				lastPlayed: new Date(),
+			});
+
+			return NextResponse.json(
+				{
+					success: true,
+					message: "Save created successfully",
+					data: save,
+				},
+				{ status: 201 }
+			);
+		}
+	} catch (error) {
+		console.error("Error creating/updating save data:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },
 			{ status: 500 }
