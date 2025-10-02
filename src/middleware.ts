@@ -69,6 +69,7 @@ const allowedOriginPatterns = [
 	/^http:\/\/localhost:\d+$/,
 	"https://shiba.hackclub.dev",
 	"https://shiba.hackclub.com",
+	/^https:\/\/.*\.github\.io$/,
 ];
 
 function isOriginAllowed(origin: string | null): boolean {
