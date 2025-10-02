@@ -83,42 +83,36 @@ function isOriginAllowed(origin: string | null): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-	if (request.method === "POST") {
-		try {
-			const body = await request.json();
-			if (!body || Object.keys(body).length === 0) {
-				return NextResponse.json(
-					{
-						message: "Bad request",
-					},
-					{
-						status: 400,
-					}
-				);
-			}
-		} catch {
-			return NextResponse.json(
-				{
-					message: "Bad request",
-				},
-				{
-					status: 400,
-				}
-			);
-		}
-	} else if (request.method === "OPTIONS") {
-		const origin = request.headers.get("origin");
+	const origin = request.headers.get("origin");
+	const allowedOrigin = isOriginAllowed(origin) ? origin || "" : "";
+
+	if (request.method === "OPTIONS") {
 		return new NextResponse(null, {
 			status: 200,
 			headers: {
-				"Access-Control-Allow-Origin": isOriginAllowed(origin)
-					? origin || ""
-					: "",
+				"Access-Control-Allow-Origin": allowedOrigin,
 				"Access-Control-Allow-Methods":
 					"GET, POST, PUT, DELETE, OPTIONS",
-				"Access-Control-Allow-Headers": "Content-Type",
+				"Access-Control-Allow-Headers": "Content-Type, Authorization",
 				"Access-Control-Allow-Credentials": "true",
 			},
 		});
 	}
+
+	const response = NextResponse.next();
+
+	if (allowedOrigin) {
+		response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+		response.headers.set(
+			"Access-Control-Allow-Methods",
+			"GET, POST, PUT, DELETE, OPTIONS"
+		);
+		response.headers.set(
+			"Access-Control-Allow-Headers",
+			"Content-Type, Authorization"
+		);
+		response.headers.set("Access-Control-Allow-Credentials", "true");
+	}
+
+	return response;
 }
