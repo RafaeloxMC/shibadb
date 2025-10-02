@@ -76,10 +76,11 @@ export default async function Home({ user }: HomeProps) {
 										My Games
 									</h2>
 									<p className="text-sm text-neutral-500 dark:text-neutral-400">
-										{dashboardData.totalGames} active{" "}
+										{dashboardData.totalGames}{" "}
 										{dashboardData.totalGames === 1
 											? "game"
-											: "games"}
+											: "games"}{" "}
+										found
 									</p>
 								</div>
 							</div>
