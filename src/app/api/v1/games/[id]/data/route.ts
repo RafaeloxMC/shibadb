@@ -64,7 +64,17 @@ export async function POST(
 		const { user } = authResult;
 
 		const { id: gameId } = await params;
-		const body = await request.json();
+		let body;
+		try {
+			body = await request.json();
+		} catch {
+			return NextResponse.json(
+				{
+					message: "Bad request",
+				},
+				{ status: 400 }
+			);
+		}
 
 		const errRes = checkDefined({
 			saveData: body.saveData,

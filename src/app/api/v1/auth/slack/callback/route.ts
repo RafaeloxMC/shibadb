@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
 			value: token,
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "lax",
+			sameSite: "none",
 			maxAge: cookieMaxAge,
 			expires: cookieExpires,
 			path: "/",
