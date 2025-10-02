@@ -14,9 +14,12 @@ export async function authenticateUser(
 		let token = request.cookies.get("shibaCookie")?.value;
 
 		if (!token) {
+			console.log("No shibaCookie found!");
 			const authHeader = request.headers.get("Authorization");
 			if (authHeader?.startsWith("Bearer ")) {
 				token = authHeader.substring(7);
+			} else {
+				console.log("No auth header found!");
 			}
 		}
 
