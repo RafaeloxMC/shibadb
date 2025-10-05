@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import GradientBackground from "@/components/GradientBackground";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 type RouteDoc = {
 	method: string;
@@ -21,26 +22,6 @@ const ROUTES: RouteDoc[] = [
 	},
 	{
 		method: "GET",
-		path: "/api/v1/auth/slack",
-		description: "Redirect to Slack OAuth (start flow).",
-		source: "/src/app/api/v1/auth/slack/route.ts",
-	},
-	{
-		method: "GET",
-		path: "/api/v1/auth/slack/callback",
-		description:
-			"OAuth callback: exchanges code, creates user & session, sets cookie and redirects to /dashboard.",
-		source: "/src/app/api/v1/auth/slack/callback/route.ts",
-	},
-	{
-		method: "GET | POST",
-		path: "/api/v1/auth/logout",
-		description:
-			"Logout endpoint: deletes session, clears cookie then redirects to /.",
-		source: "/src/app/api/v1/auth/logout/route.ts",
-	},
-	{
-		method: "GET",
 		path: "/api/v1/auth/me",
 		description:
 			"Returns the authenticated user (requires cookie or Authorization header).",
@@ -58,7 +39,7 @@ const ROUTES: RouteDoc[] = [
 		path: "/api/v1/games/new",
 		description:
 			"Create a new game for the authenticated user. Body: { name, description }",
-		requestExample: `{"name":"My Game","description":"Short description"}`,
+		requestExample: `{"name":"My Game","description":"My amazing game!"}`,
 		source: "/src/app/api/v1/games/new/route.ts",
 	},
 	{
@@ -69,24 +50,18 @@ const ROUTES: RouteDoc[] = [
 		source: "/src/app/api/v1/games/[id]/route.ts",
 	},
 	{
-		method: "PUT",
-		path: "/api/v1/games/:id/keys",
-		description:
-			"Generate a new API key for the game (owner only). Returns { key }.",
-		source: "/src/app/api/v1/games/[id]/keys/route.ts",
-	},
-	{
 		method: "POST",
 		path: "/api/v1/games/:id/keys (validate)",
 		description:
-			"Validate an API key for a game (public validation). Body: { key }",
+			"DEPRECATED! Validate an API key for a game (public validation). Body: { key }",
 		requestExample: `{"key":"SHIBADB-..."} `,
 		source: "/src/app/api/v1/games/[id]/keys/route.ts",
 	},
 	{
 		method: "DELETE",
 		path: "/api/v1/games/:id/keys",
-		description: "Remove an API key (owner only). Body: { key }",
+		description:
+			"DEPRECATED! Remove an API key (owner only). Body: { key }",
 		source: "/src/app/api/v1/games/[id]/keys/route.ts",
 	},
 	{
@@ -172,15 +147,58 @@ export default function DocsPage() {
 					and the OAuth flow for authentication.
 				</p>
 
+				<h2 className="text-3xl font-bold text-center mb-6 text-neutral-900 dark:text-white">
+					Implementation in Godot
+				</h2>
+				<p className="text-center text-neutral-600 dark:text-neutral-400 mb-8">
+					ShibaDB provides a GDScript implementation for simple use.
+					The GDScript can be found{" "}
+					<Link
+						href="https://github.com/RafaeloxMC/shibadb-gdscript"
+						className="underline"
+					>
+						here
+					</Link>
+					. To implement the script, use the following code:
+				</p>
+
+				<pre className="bg-neutral-100 dark:bg-neutral-900 rounded-md p-4 mt-4 mb-8 text-sm overflow-auto">
+					<code>
+						{`func _ready() -> void:
+	# Connect the signal for loading saves to a function in your code
+	ShibaDB.save_loaded.connect(_on_save_loaded)
+	# Initialize ShibaDB with your Game ID from the dashboard
+	await ShibaDB.init_shibadb("GAMEID_HERE")
+	# Load the user's saved progress
+	ShibaDB.load_progress()
+	
+func _on_save_loaded(saveData) -> void:
+	# Set your variables here! Don't forget to null check these or they might fail
+	# Example:
+	if saveData.has("coins"):
+		coins = int(saveData.coins)
+		
+func save_progress() -> void:
+	# Finally save your progress by calling this function.
+	# You can pass as many arguments as you like. Otherwise, you can also pass a Dictionary[String, Variant]
+	ShibaDB.save_progress({ "coins": coins })`}
+					</code>
+				</pre>
+
+				<h2 className="text-3xl font-bold text-center mb-6 text-neutral-900 dark:text-white">
+					API Routes
+				</h2>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					{ROUTES.map((r) => (
 						<RouteCard key={r.path + r.method} r={r} />
 					))}
 				</div>
 
-				<div className="mt-10 prose text-neutral-700 dark:text-neutral-300">
-					<h2 className="text-4xl font-bold">Authentication notes</h2>
-					<p>
+				<div className="mt-10 prose text-neutral-900 dark:text-white text-center">
+					<h2 className="text-3xl font-bold mb-2">
+						Authentication notes
+					</h2>
+					<p className="text-neutral-600 dark:text-neutral-400">
 						Routes that require a logged-in user check for the{" "}
 						<code>shibaCookie</code> session cookie or a Bearer
 						token in the Authorization header. Sessions are created
