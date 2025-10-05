@@ -10,7 +10,8 @@ const Pricing = () => (
 
 		<p className="text-lg text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto leading-relaxed">
 			ShibaDB provides a free way to store and manage your user data.
-			There are absolutely no prices involved!
+			There are absolutely no prices involved! ShibaDB is and will always
+			be 100% free to use.
 		</p>
 	</section>
 );
