@@ -1,5 +1,10 @@
 import { connectDB } from "@/database/database";
-import Save from "@/database/schemas/Save";
+import Save, { ISave } from "@/database/schemas/Save";
+import Game from "@/database/schemas/Game";
+import { getTokenPayload } from "@/util/secureTokens";
+import { cookies } from "next/headers";
+import EditSaveButton from "./EditSaveButton";
+import { Types } from "mongoose";
 
 type Props = {
 	gameId: string;
@@ -8,6 +13,18 @@ type Props = {
 
 export default async function Database({ gameId, gameName }: Props) {
 	await connectDB();
+
+	const cookieStore = await cookies();
+	const token = cookieStore.get("shibaCookie")?.value;
+	let currentUserSlackId: string | null = null;
+
+	if (token) {
+		const payload = await getTokenPayload(token);
+		currentUserSlackId = payload?.slackId || null;
+	}
+
+	const game = await Game.findById(gameId).lean();
+	const ownerSlackId = game?.ownerSlackId;
 
 	const saves = await Save.find({ gameId }).lean();
 
@@ -51,10 +68,21 @@ export default async function Database({ gameId, gameName }: Props) {
 	const totalEntries = saves.length;
 	const uniquePlayers = new Set(saves.map((save) => save.playerSlackId)).size;
 
-	const mostRecentSave = saves.sort(
+	const sortedSaves = saves.sort(
 		(a, b) =>
 			new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime()
-	)[0];
+	);
+
+	const mostRecentSave = sortedSaves[0];
+
+	const ownerSaves = sortedSaves.filter(
+		(save) => save.playerSlackId === ownerSlackId
+	);
+	const otherSaves = sortedSaves.filter(
+		(save) => save.playerSlackId !== ownerSlackId
+	);
+
+	const isOwner = currentUserSlackId === ownerSlackId;
 
 	return (
 		<div className="min-h-screen max-w-7xl mx-auto px-6 py-8">
@@ -190,7 +218,7 @@ export default async function Database({ gameId, gameName }: Props) {
 			</div>
 
 			{mostRecentSave && (
-				<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6">
+				<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6 mb-8">
 					<h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
 						Most Recent Save
 					</h2>
@@ -229,6 +257,105 @@ export default async function Database({ gameId, gameName }: Props) {
 								{mostRecentSave.version || "N/A"}
 							</p>
 						</div>
+					</div>
+				</div>
+			)}
+
+			{isOwner && ownerSaves.length > 0 && (
+				<div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-pink-300 dark:border-pink-700 p-6 mb-8">
+					<div className="flex items-center justify-between mb-4">
+						<div className="flex items-center gap-3">
+							<div className="w-10 h-10 bg-pink-500/20 rounded-xl flex items-center justify-center">
+								<svg
+									className="w-5 h-5 text-pink-600 dark:text-pink-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
+							</div>
+							<div>
+								<h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+									Your Saves (Owner)
+								</h2>
+								<p className="text-sm text-neutral-600 dark:text-neutral-400">
+									You can edit your own save data
+								</p>
+							</div>
+						</div>
+						<span className="px-3 py-1 text-xs font-semibold bg-pink-500 text-white rounded-full">
+							{ownerSaves.length}{" "}
+							{ownerSaves.length === 1 ? "Save" : "Saves"}
+						</span>
+					</div>
+
+					<div className="space-y-4">
+						{ownerSaves.map((save) => (
+							<div
+								key={save._id.toString()}
+								className="bg-white dark:bg-neutral-800 rounded-lg p-4 border border-pink-200 dark:border-pink-700"
+							>
+								<EditSaveButton
+									gameId={gameId}
+									saveId={(
+										save._id as Types.ObjectId
+									).toString()}
+									saveName={save.saveName}
+									saveData={save.saveData}
+									lastPlayed={save.lastPlayed}
+								/>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+
+			{otherSaves.length > 0 && (
+				<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6">
+					<div className="flex items-center justify-between mb-4">
+						<div>
+							<h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+								Other Players&apos; Saves
+							</h2>
+							<p className="text-sm text-neutral-600 dark:text-neutral-400">
+								View-only access
+							</p>
+						</div>
+						<span className="px-3 py-1 text-xs font-semibold bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-full">
+							{otherSaves.length}{" "}
+							{otherSaves.length === 1 ? "Save" : "Saves"}
+						</span>
+					</div>
+
+					<div className="space-y-3">
+						{otherSaves.map((save) => (
+							<div
+								key={save._id.toString()}
+								className="bg-neutral-50 dark:bg-neutral-900/30 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700"
+							>
+								<div className="flex items-start justify-between mb-2">
+									<div>
+										<h3 className="font-semibold text-neutral-900 dark:text-white text-sm">
+											{save.saveName || "Untitled Save"}
+										</h3>
+										<p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 font-mono">
+											Player: {save.playerSlackId}
+										</p>
+									</div>
+									<span className="text-xs text-neutral-500 dark:text-neutral-400">
+										{new Date(
+											save.lastPlayed
+										).toLocaleDateString()}
+									</span>
+								</div>
+							</div>
+						))}
 					</div>
 				</div>
 			)}
