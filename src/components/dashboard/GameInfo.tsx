@@ -30,7 +30,15 @@ export default function GameInfo({ game }: Props) {
 	}
 
 	return (
-		<div className="flex flex-col min-h-screen max-w-4xl mx-auto px-6 py-8 gap-8">
+		<div className="min-h-screen max-w-7xl mx-auto px-6 py-8">
+			<div className="mb-8">
+				<h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+					Game Info
+				</h1>
+				<p className="text-neutral-600 dark:text-neutral-400">
+					View and manage your game.
+				</p>
+			</div>
 			<div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 p-6">
 				<div className="flex items-start justify-between gap-6">
 					<div className="flex-1">

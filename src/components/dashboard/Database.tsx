@@ -57,7 +57,7 @@ export default async function Database({ gameId, gameName }: Props) {
 	)[0];
 
 	return (
-		<div className="min-h-screen max-w-6xl mx-auto px-6 py-8">
+		<div className="min-h-screen max-w-7xl mx-auto px-6 py-8">
 			<div className="mb-6">
 				<h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
 					Database: {gameName}
