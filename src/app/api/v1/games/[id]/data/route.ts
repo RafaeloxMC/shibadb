@@ -138,3 +138,80 @@ export async function POST(
 		);
 	}
 }
+
+export async function DELETE(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> }
+) {
+	try {
+		await connectDB();
+
+		const authResult = await requireAuth(request);
+
+		if ("error" in authResult) {
+			return authResult.error;
+		}
+
+		const { user } = authResult;
+
+		const { id: gameId } = await params;
+		let body;
+		try {
+			body = await request.json();
+		} catch {
+			return NextResponse.json(
+				{
+					message: "Bad request",
+				},
+				{ status: 400 }
+			);
+		}
+
+		const errRes = checkDefined({
+			saveData: body.saveData,
+		});
+
+		if (errRes) {
+			return errRes;
+		}
+
+		const { saveName } = body;
+
+		const game = await Game.findById(gameId);
+		if (!game) {
+			return NextResponse.json(
+				{ error: "Game not found" },
+				{ status: 404 }
+			);
+		}
+
+		const save = await Save.findOne({
+			gameId,
+			playerSlackId: user.slackId,
+			saveName: saveName || "Untitled Save",
+		});
+
+		if (save) {
+			await save.deleteOne();
+
+			return NextResponse.json({
+				success: true,
+				message: "Save deleted successfully",
+			});
+		} else {
+			return NextResponse.json(
+				{
+					success: false,
+					message: "Save not found",
+				},
+				{ status: 404 }
+			);
+		}
+	} catch (error) {
+		console.error("Error deleting save data:", error);
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 }
+		);
+	}
+}

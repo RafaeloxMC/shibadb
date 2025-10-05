@@ -17,6 +17,8 @@ import GameInfo from "@/components/dashboard/GameInfo";
 import Keys from "@/components/dashboard/Keys";
 import Players from "@/components/dashboard/Players";
 import Database from "@/components/dashboard/Database";
+import Save, { ISave } from "@/database/schemas/Save";
+import MyData from "@/components/dashboard/My-Data";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockUser: IUser = {
@@ -91,15 +93,27 @@ async function Dashboard({ page, id }: DashboardProps) {
 		}
 	};
 
+	const getUserSaves = async (user: IUser) => {
+		try {
+			const saves = await Save.find({ playerSlackId: user.slackId });
+			return saves as ISave[];
+		} catch {
+			console.error("Error while loading user saves!");
+			return undefined;
+		}
+	};
+
 	const user = await getAuthenticatedUser();
 	if (!user) {
 		redirect("/auth/login");
 	}
 
+	const saves = await getUserSaves(user);
+
 	let pageComponent;
 
 	if (page == "home") {
-		pageComponent = <Home user={user as IUser} />;
+		pageComponent = <Home user={user as IUser} saves={saves} />;
 	} else if (page == "games") {
 		if (id == "") {
 			pageComponent = (
@@ -145,8 +159,10 @@ async function Dashboard({ page, id }: DashboardProps) {
 			) as unknown as IGame;
 			pageComponent = <Database gameId={id || ""} gameName={game.name} />;
 		}
+	} else if (page == "my-data") {
+		pageComponent = <MyData saves={saves} />;
 	} else {
-		pageComponent = <Home user={user as IUser} />;
+		pageComponent = <Home user={user as IUser} saves={saves} />;
 	}
 
 	return (
