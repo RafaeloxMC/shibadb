@@ -181,10 +181,6 @@ async function Dashboard({ page, id }: DashboardProps) {
 						</span>
 					</Link>
 
-					<span className="ml-4 text-sm text-neutral-500 dark:text-neutral-400 font-medium">
-						Go back
-					</span>
-
 					<div className="flex items-center space-x-4">
 						{user.avatar && (
 							<Image
