@@ -159,7 +159,10 @@ export default function DocsPage() {
 					>
 						here
 					</Link>
-					. To implement the script, use the following code:
+					. Simply download the script, drag it into your scripts
+					folder and register it as an autoload / global (Project &gt;
+					Project Settings &gt; Globals). To implement the script, use
+					the following code:
 				</p>
 
 				<pre className="bg-neutral-100 dark:bg-neutral-900 rounded-md p-4 mt-4 mb-8 text-sm overflow-auto">
@@ -181,7 +184,12 @@ func _on_save_loaded(saveData) -> void:
 func save_progress() -> void:
 	# Finally save your progress by calling this function.
 	# You can pass as many arguments as you like. Otherwise, you can also pass a Dictionary[String, Variant]
-	ShibaDB.save_progress({ "coins": coins })`}
+	ShibaDB.save_progress({ "coins": coins })
+	
+func reset_progress() -> void:
+	# If you want to reset the players' progress, use this method:
+	# The name currently defaults to "Untitled Save"
+	ShibaDB.reset_progress("MY SAVE NAME")`}
 					</code>
 				</pre>
 
