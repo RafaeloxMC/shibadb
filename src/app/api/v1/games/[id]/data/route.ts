@@ -168,7 +168,7 @@ export async function DELETE(
 		}
 
 		const errRes = checkDefined({
-			saveData: body.saveData,
+			saveName: body.saveName,
 		});
 
 		if (errRes) {
